@@ -4,7 +4,7 @@ var intervalUtils = require('math.interval-utils')
 var union = intervalUtils.union
 var numToInterval = intervalUtils.numToInterval
 var rawInterval = require('math.interval/src/raw-interval')
-var toSet = require('./cast/')(MSet)
+var toSet = require('./cast/')(MSet, true)
 
 function MSet (e) {
     if (!(this instanceof MSet)) {

@@ -6,12 +6,16 @@ var multiIntervalCast = require('./multi-interval-cast')
 var intervalCast = require('./interval-cast')
 var predicateCast = require('./predicate-cast.js')
 
-module.exports = function (MSet) {
+module.exports = function (MSet, compact) {
     var setCast = setCastFactory(MSet)
+    if (compact) {
+        stringCast = compactAfter(stringCast)
+        multiIntervalCast = compactAfter(multiIntervalCast)
+    }
     return castFactory([
         setCast,
-        multiIntervalToSet(compactAfter(stringCast)),
-        multiIntervalToSet(compactAfter(multiIntervalCast)),
+        multiIntervalToSet(stringCast),
+        multiIntervalToSet(multiIntervalCast),
         multiIntervalToSet(intervalCast),
         predicateCast
     ])
