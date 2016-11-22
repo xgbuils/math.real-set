@@ -1,7 +1,7 @@
 var chai = require('chai')
 var expect = chai.expect
 var samples = require('../interval-samples')
-var parseMultiInterval = require('../../src/parser')
+var parseMultiInterval = require('../../src/parser/')
 
 describe('parseMultiInterval', function () {
     it('[4,5]U [ 3 , 9)', function () {
@@ -44,5 +44,19 @@ describe('parseMultiInterval', function () {
             samples['{-1}'],
             samples['(3, 0]']
         ])
+    })
+
+    it('( 2 , 7 U {}', function () {
+        function test () {
+            parseMultiInterval('( 2 , 7 U {}')
+        }
+        expect(test).to.throw('\'( 2 , 7 U {}\' is not able to be parsed')
+    })
+
+    it('{{7}}', function () {
+        function test () {
+            parseMultiInterval('{{7}}')
+        }
+        expect(test).to.throw('\'{{7}}\' is not able to be parsed')
     })
 })

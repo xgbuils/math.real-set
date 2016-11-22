@@ -22,12 +22,21 @@ describe('Set', function () {
             })
         })
 
-        describe('if parameter is not castable to set', function () {
+        describe('if parameter is type not castable to set', function () {
             it('throws an error', function () {
                 function test () {
                     new MSet(/a+/)
                 }
                 expect(test).to.throw('/a+/ is not castable to Set')
+            })
+        })
+
+        describe('if parameter is string not castable to set', function () {
+            it('throws an error', function () {
+                function test () {
+                    new MSet('^')
+                }
+                expect(test).to.throw('\'^\' is not able to be parsed')
             })
         })
     })

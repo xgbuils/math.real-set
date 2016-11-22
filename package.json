@@ -4,8 +4,8 @@
   "description": "Class to work with sets of real numbers.",
   "main": "src/index.js",
   "scripts": {
-    "lint": "eslint ./**/*.js",
-    "mocha": "mocha ./**/*_test.js",
+    "lint": "eslint .",
+    "mocha": "mocha --recursive",
     "test": "npm run lint && npm run mocha"
   },
   "repository": {

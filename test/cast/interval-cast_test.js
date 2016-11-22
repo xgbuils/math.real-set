@@ -1,10 +1,10 @@
 var chai = require('chai')
 var expect = chai.expect
-var samples = require('./interval-samples')
+var samples = require('../interval-samples')
 var raw = require('math.interval/src/raw-interval')
 
 var Interval = require('math.interval')
-var intervalCast = require('../src/cast/interval-cast')
+var intervalCast = require('../../src/cast/interval-cast')
 
 describe('intervalCast', function () {
     describe('when param is IntervalCastable', function () {

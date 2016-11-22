@@ -1,4 +1,3 @@
-var typeVerify = require('type-verify')
 var Interval = require('math.interval')
 var toInterval = require('math.interval/src/cast')(Interval)
 

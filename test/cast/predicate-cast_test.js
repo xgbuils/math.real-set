@@ -1,7 +1,7 @@
 var chai = require('chai')
 var expect = chai.expect
 
-var predicateCast = require('../src/cast/predicate-cast.js')
+var predicateCast = require('../../src/cast/predicate-cast.js')
 
 describe('predicateCast', function () {
     describe('if it is passed a function', function () {

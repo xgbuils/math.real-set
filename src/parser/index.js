@@ -6,13 +6,30 @@ function parseMultiInterval (str) {
     str.split('U').map(function (e) {
         return e.trim()
     }).forEach(function (interval) {
-        if (interval[0] === '{') {
-            intervals.push.apply(intervals, parseIsolatedIntervals(interval))
-        } else if (['(', '['].indexOf(interval[0]) !== -1) {
-            intervals.push(parseInterval(interval))
+        var list = notThrow(convertToIntervals, interval)
+        if (list === null) {
+            throw new Error('\'' + str + '\' is not able to be parsed')
         }
+        intervals.push.apply(intervals, list)
     })
     return intervals
+}
+
+function convertToIntervals (interval) {
+    if (interval[0] === '{') {
+        return parseIsolatedIntervals(interval)
+    } else if (['(', '['].indexOf(interval[0]) !== -1) {
+        return [parseInterval(interval)]
+    }
+    return null
+}
+
+function notThrow (cb, interval) {
+    try {
+        return cb(interval)
+    } catch (e) {
+        return null
+    }
 }
 
 module.exports = parseMultiInterval

@@ -1,12 +1,12 @@
 var chai = require('chai')
 var expect = chai.expect
-var samples = require('./interval-samples.js')
+var samples = require('../interval-samples.js')
 var rawInterval = require('math.interval/src/raw-interval.js')
 var assert = require('assert')
 
-var MSet = require('../src/index')
+var MSet = require('../../src/index')
 var Interval = require('math.interval')
-var stringCast = require('../src/cast/string-cast.js')
+var stringCast = require('../../src/cast/string-cast.js')
 
 describe('stringCast', function () {
     describe('if is a string then try to parse to array of intervals', function () {
