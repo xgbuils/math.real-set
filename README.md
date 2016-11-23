@@ -3,7 +3,7 @@
 Class to work with sets of real numbers.
 
 ## Version
-0.1.0
+0.2.0
 
 ## Install
 ``` bash
