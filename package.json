@@ -1,5 +1,5 @@
 {
-  "name": "math.set",
+  "name": "math.real-set",
   "version": "0.2.0",
   "description": "Class to work with sets of real numbers.",
   "main": "src/index.js",
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/xgbuils/math.set#readme",
   "dependencies": {
-    "math.interval": "^0.1.1",
+    "math.interval": "^0.1.3",
     "math.interval-utils": "^0.2.0"
   },
   "devDependencies": {

@@ -4,15 +4,15 @@ var intervalUtils = require('math.interval-utils')
 var union = intervalUtils.union
 var numToInterval = intervalUtils.numToInterval
 var rawInterval = require('math.interval/src/raw-interval')
-var toSet = require('./cast/')(MSet, true)
+var toSet = require('./cast/')(RealSet, true)
 
-function MSet (e) {
-    if (!(this instanceof MSet)) {
-        return new MSet(e)
+function RealSet (e) {
+    if (!(this instanceof RealSet)) {
+        return new RealSet(e)
     }
     var obj = toSet(e)
     if (obj === e) {
-        throw new Error(e + ' is not castable to Set')
+        throw new Error(e + ' is not castable to RealSet')
     }
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
@@ -23,7 +23,7 @@ function MSet (e) {
     }
 }
 
-MSet.union = function () {
+RealSet.union = function () {
     var intervals = []
     var fns = []
     intervals.forEach.call(arguments, function (set) {
@@ -31,7 +31,7 @@ MSet.union = function () {
         var resultIntervals = result.intervals
         var resultFns = result.fns
         if (result === set) {
-            throw new Error(set + ' is not castable to Set')
+            throw new Error(set + ' is not castable to RealSet')
         }
         if (resultIntervals.length > 0) {
             intervals.push.apply(intervals, resultIntervals.map(rawInterval))
@@ -41,7 +41,7 @@ MSet.union = function () {
         }
     })
 
-    return Object.create(MSet.prototype, {
+    return Object.create(RealSet.prototype, {
         intervals: {
             value: union(intervals).map(function (interval) {
                 return new Interval(interval)
@@ -53,7 +53,7 @@ MSet.union = function () {
     })
 }
 
-Object.defineProperties(MSet.prototype, {
+Object.defineProperties(RealSet.prototype, {
     isEmpty: {
         value: function () {
             return this.fns.length > 0 ? null : this.intervals.length === 0
@@ -76,7 +76,7 @@ Object.defineProperties(MSet.prototype, {
 
             var obj = toSet(e)
             if (obj === e) {
-                throw new Error(e + ' is not castable to Set')
+                throw new Error(e + ' is not castable to RealSet')
             } else if (obj.fns.length > 0) {
                 return null
             }
@@ -90,7 +90,20 @@ Object.defineProperties(MSet.prototype, {
         value: function () {
             var sets = [this]
             sets.push.apply(sets, arguments)
-            return MSet.union.apply(null, sets)
+            return RealSet.union.apply(null, sets)
+        }
+    },
+
+    toString: {
+        value: function () {
+            var isEmpty = this.isEmpty()
+            if (isEmpty === true) {
+                return '{}'
+            } else if (isEmpty === false) {
+                return this.intervals.join(' U ')
+            } else {
+                return 'predicate set'
+            }
         }
     }
 })
@@ -109,4 +122,4 @@ function containsByIntervals (intervals1, intervals2) {
     })
 }
 
-module.exports = MSet
+module.exports = RealSet

@@ -4,7 +4,7 @@ var samples = require('../interval-samples.js')
 var rawInterval = require('math.interval/src/raw-interval.js')
 var assert = require('assert')
 
-var MSet = require('../../src/index')
+var RealSet = require('../../src/index')
 var Interval = require('math.interval')
 var stringCast = require('../../src/cast/string-cast.js')
 
@@ -48,7 +48,7 @@ describe('stringCast', function () {
 
     describe('when type of value is impossible to cast', function () {
         it('param is the same reference as result', function () {
-            var param = new MSet('(1, 3)')
+            var param = new RealSet('(1, 3)')
             var result = stringCast(param)
             expect(result).to.be.equal(param)
         })

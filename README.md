@@ -1,4 +1,4 @@
-# math.set
+# math.real-set
 
 Class to work with sets of real numbers.
 
@@ -7,21 +7,21 @@ Class to work with sets of real numbers.
 
 ## Install
 ``` bash
-npm install math.set
+npm install math.real-set
 ```
 
 ## Usage
 ``` javascript
-var MSet = require('math.set')
+var RealSet = require('math.real-set')
 
-var set = new MSet('(0, 2] U {6, 7, 8}')
+var set = new RealSet('(0, 2] U {6, 7, 8}')
 
 set.isEmpty() // false
 set.contains(4) // false
 set.contains(6) // true
 set.contains('[1, 2)') // true
-set.union('(2, 7)') // new MSet('(0, 7] U {8}')
-set.union('(8, 9])') // new MSet('(0, 2] U {6, 7} U [8, 9]')
+set.union('(2, 7)') // new RealSet('(0, 7] U {8}')
+set.union('(8, 9])') // new RealSet('(0, 2] U {6, 7} U [8, 9]')
 ```
 
 ## API
@@ -37,9 +37,9 @@ It returns true or false if set is empty or not.
 
 Example:
 ``` javascript
-var MSet = require('math.set')
+var RealSet = require('math.real-set')
 
-var set = new MSet('[2, 4)')
+var set = new RealSet('[2, 4)')
 
 set.isEmpty() // returns false
 ```
@@ -49,34 +49,34 @@ It returns `true` or `false` if instance contains the `set` passed by parameter.
 
 Example:
 ``` javascript
-var MSet = require('math.set')
+var RealSet = require('math.real-set')
 
-var set = new MSet('[1, 3) U [4, 8]')
+var set = new RealSet('[1, 3) U [4, 8]')
 
 set.contains('(1, 2) U [4, 7)') // returns true
-set.contains(new MSet('{3, 7}')) // returns false
+set.contains(new RealSet('{3, 7}')) // returns false
 ```
 
 #### Set#union(...sets)
 It returns a set that represents the union of `sets` passed by parameter. It throws an error if some parameter is not SetCastable.
 
 ``` javascript
-var MSet = require('math.set')
+var RealSet = require('math.real-set')
 
-var set = new MSet('[1, 3) U (3, 4]')
+var set = new RealSet('[1, 3) U (3, 4]')
 
 set.union('(2, 4) U {5}', '{5} U (6, 7)')
-// returns new MSet('[1, 4] U {5} (6, 7)')
+// returns new RealSet('[1, 4] U {5} (6, 7)')
 ```
 
 #### Set.union(...sets)
 Set also has static method that calculates the union of sets in the same way as `union` method.
 
 ``` javascript
-var MSet = require('math.set')
+var RealSet = require('math.real-set')
 
-MSet.union('[1, 3) U (3, 4]', '(2, 4) U {5}', '{5} U (6, 7)')
-// returns new MSet('[1, 4] U {5} (6, 7)')
+RealSet.union('[1, 3) U (3, 4]', '(2, 4) U {5}', '{5} U (6, 7)')
+// returns new RealSet('[1, 4] U {5} (6, 7)')
 ```
 
 ### SetCastable
@@ -99,7 +99,7 @@ var rawSet = require('math.interval/src/raw-set.js')
 It converts SetCastable value to array of interval [data structure interval](https://github.com/xgbuils/math.interval-utils) defined in `math.interval-utils` package. It is posible to import this function thus:
 
 ``` javascript
-var rawSet = require('math.set/src/cast.js')
+var rawSet = require('math.real-set/src/cast.js')
 ```
 
 ## LICENSE
