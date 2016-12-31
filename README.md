@@ -79,6 +79,19 @@ RealSet.union('[1, 3) U (3, 4]', '(2, 4) U {5}', '{5} U (6, 7)')
 // returns new RealSet('[1, 4] U {5} (6, 7)')
 ```
 
+#### Set#toString()
+It returns an string with a expression representation of set
+
+``` javascript
+var RealSet = require('math.real-set')
+
+var a = new RealSet('(5, 2] U (3, 3)') // empty
+var b = new RealSet('[2, 2] U (5, 6)') // singleton interval
+
+a.toString() // '{}'
+b.toString() // '{2} U (5, 6)'
+```
+
 ### SetCastable
 A value is SetCastable if it is one of this list of types:
 - instance of `Set`.
