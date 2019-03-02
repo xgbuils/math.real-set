@@ -1,24 +1,32 @@
 var intervalUtils = require('math.interval-utils')
 var numToInterval = intervalUtils.numToInterval
+const {Right, Left} = require('data.either')
+const trim = e => e.trim()
+const parseToNumber = str => {
+    const num = Number(str)
+    return isNaN(num)
+        ? Left(`"{${str}}" cannot be parsed to a set.`)
+        : Right(num)
+}
+const append = array => item => {
+    array.push(item)
+    return array
+}
 
 function parseIsolatedIntervals (str) {
     var matches = /^\{\s*(\S+(?:\s*,\s*\S+)*)\s*\}$/.exec(str)
 
     if (!matches) {
-        throw new Error(str + ' does not match')
+        return Left(`"${str}" cannot be parsed to set of isolated numbers.`)
     }
 
-    return matches[1].split(',').map(function (e) {
-        return e.trim()
-    }).map(function (e) {
-        var num = Number(e)
-        if (isNaN(num)) {
-            throw new Error('"' + e + '" is not a number')
-        }
-        return num
-    }).map(function (num) {
-        return numToInterval(num)
-    })
+    return matches[1].split(',').map(trim)
+        .reduce((intervals, intervalString) => {
+            return intervals.chain(intervals => {
+                return parseToNumber(intervalString).map(append(intervals))
+            })
+        }, Right([]))
+        .map((num) => num.map(numToInterval))
 }
 
 module.exports = parseIsolatedIntervals

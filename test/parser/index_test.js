@@ -1,11 +1,12 @@
 var chai = require('chai')
+chai.use(require('chai-string'))
 var expect = chai.expect
 var samples = require('../interval-samples')
 var parseMultiInterval = require('../../src/parser/')
 
-describe('parseMultiInterval', function () {
+describe('parseMultipleIntervals', function () {
     it('[4,5]U [ 3 , 9)', function () {
-        var set = parseMultiInterval('[4,5]U [ 3 , 9)')
+        var set = parseMultiInterval('[4,5]U [ 3 , 9)').getOrElse()
         expect(set).to.be.deep.equal([
             samples['[4, 5]'],
             samples['[3, 9)']
@@ -13,7 +14,7 @@ describe('parseMultiInterval', function () {
     })
 
     it('(4, 8)   U[ 3 ,5)U{-1,7}', function () {
-        var set = parseMultiInterval('(4, 8)   U[ 3 ,5)U{-1,7}')
+        var set = parseMultiInterval('(4, 8)   U[ 3 ,5)U{-1,7}').getOrElse()
         expect(set).to.be.deep.equal([
             samples['(4, 8)'],
             samples['[3, 5)'],
@@ -23,21 +24,21 @@ describe('parseMultiInterval', function () {
     })
 
     it('  {    5    }    ', function () {
-        var set = parseMultiInterval('  {    5    }    ')
+        var set = parseMultiInterval('  {    5    }    ').getOrElse()
         expect(set).to.be.deep.equal([
             samples['{5}']
         ])
     })
 
     it('(3,   11  ]    ', function () {
-        var set = parseMultiInterval('(3,   11  ]    ')
+        var set = parseMultiInterval('(3,   11  ]    ').getOrElse()
         expect(set).to.be.deep.equal([
             samples['(3, 11]']
         ])
     })
 
     it('( 2 , 7] U {5, -1} U (3, 0]', function () {
-        var set = parseMultiInterval('( 2 , 7] U {5, -1} U (3, 0]')
+        var set = parseMultiInterval('( 2 , 7] U {5, -1} U (3, 0]').getOrElse()
         expect(set).to.be.deep.equal([
             samples['(2, 7]'],
             samples['{5}'],
@@ -47,16 +48,17 @@ describe('parseMultiInterval', function () {
     })
 
     it('( 2 , 7 U {}', function () {
-        function test () {
-            parseMultiInterval('( 2 , 7 U {}')
-        }
-        expect(test).to.throw('\'( 2 , 7 U {}\' is not able to be parsed')
+        const unparsableSet = '( 2 , 7 U {}'
+        const error = parseMultiInterval(unparsableSet).swap().getOrElse()
+
+        expect(error).to.startsWith(`parsing error in "${unparsableSet}": `)
     })
 
     it('{{7}}', function () {
-        function test () {
-            parseMultiInterval('{{7}}')
-        }
-        expect(test).to.throw('\'{{7}}\' is not able to be parsed')
+        const unparsableSet = '{{7}}'
+        const error = parseMultiInterval('{{7}}').swap().getOrElse()
+
+        expect(error).to.be.equal(
+            `parsing error in "${unparsableSet}": "{{7}}" cannot be parsed to a set.`)
     })
 })

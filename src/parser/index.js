@@ -1,35 +1,39 @@
-var parseIsolatedIntervals = require('./isolated-intervals.js')
-var parseInterval = require('math.interval-utils').parser
-
-function parseMultiInterval (str) {
-    var intervals = []
-    str.split('U').map(function (e) {
-        return e.trim()
-    }).forEach(function (interval) {
-        var list = notThrow(convertToIntervals, interval)
-        if (list === null) {
-            throw new Error('\'' + str + '\' is not able to be parsed')
-        }
-        intervals.push.apply(intervals, list)
-    })
-    return intervals
+const { Left, Right } = require('data.either')
+const parseIsolatedIntervals = require('./isolated-intervals.js')
+const { parser } = require('math.interval-utils')
+const trim = (e) => e.trim()
+const append = array => items => {
+    array.push.apply(array, items)
+    return array
 }
+const identity = x => x
+const cannotBeParsedToASet = set =>
+    Left(`${set} cannot be parsed to a subset of Real numbers.`)
 
-function convertToIntervals (interval) {
-    if (interval[0] === '{') {
-        return parseIsolatedIntervals(interval)
-    } else if (['(', '['].indexOf(interval[0]) !== -1) {
-        return [parseInterval(interval)]
+const convertToIntervals = (set) => {
+    if (set[0] === '{') {
+        return parseIsolatedIntervals(set)
+    } else if (['(', '['].indexOf(set[0]) !== -1) {
+        return parser(set).map(interval => [interval])
     }
-    return null
+    return cannotBeParsedToASet(`"${set}"`)
 }
 
-function notThrow (cb, interval) {
-    try {
-        return cb(interval)
-    } catch (e) {
-        return null
+const parseMultipleIntervals = (set) => {
+    return set.split('U').map(trim).reduce((intervalList, intervalString) => {
+        return intervalList.chain(intervalList => {
+            return convertToIntervals(intervalString).map(append(intervalList))
+        })
+    }, Right([]))
+}
+
+module.exports = (set) => {
+    let result
+    if (typeof set !== 'string') {
+        result = cannotBeParsedToASet(set)
+    } else {
+        result = parseMultipleIntervals(set)
+        set = `"${set}"`
     }
+    return result.bimap((error) => `parsing error in ${set}: ${error}`, identity)
 }
-
-module.exports = parseMultiInterval
