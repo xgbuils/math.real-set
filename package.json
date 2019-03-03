@@ -1,6 +1,6 @@
 {
   "name": "math.real-set",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Class to work with sets of real numbers.",
   "main": "src/index.js",
   "scripts": {

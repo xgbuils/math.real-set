@@ -8,7 +8,7 @@
 Class to work with sets of real numbers.
 
 ## Version
-0.2.0
+0.3.0
 
 ## Install
 ``` bash
