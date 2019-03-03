@@ -1,3 +1,3 @@
-module.exports = function rawSet (e) {
+module.exports = function rawSet(e) {
     return e.intervals
 }

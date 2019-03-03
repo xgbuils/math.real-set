@@ -1,1 +1,1 @@
-module.exports = (e) => e.intervals
+module.exports = e => e.intervals

@@ -201,7 +201,7 @@ module.exports = {
         limit: 0
     }],
 
-  // empty intervals
+    // empty intervals
     '(3, 0]': [{
         value: 3,
         limit: 1
