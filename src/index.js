@@ -24,10 +24,10 @@ const containsByIntervals = (intervals1, intervals2) => {
     })
 }
 
-const realSetUnion = (...args) => {
-    const intervals = flatten(args.map(set => set.intervals))
-    return new RealSet(union(intervals))
-}
+const toIntervals = set => set.intervals
+const fromIntervals = intervals => new RealSet(union(intervals))
+
+const realSetUnion = (...args) => fromIntervals(flatten(args.map(toIntervals)))
 
 class RealSet {
     constructor(intervals) {
@@ -77,6 +77,10 @@ module.exports = {
             intervals => new RealSet(union(intervals))
         ).getOrElse()
     },
+
+    fromIntervals,
+
+    toIntervals,
 
     union: realSetUnion
 }
