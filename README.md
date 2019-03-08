@@ -5,7 +5,7 @@
 [![Coverage Status][5]][6]
 [![Dependency Status][7]][8]
 
-Class to work with sets of real numbers.
+Class to work with subsets of real numbers.
 
 ## Version
 0.3.0
@@ -16,108 +16,171 @@ npm install math.real-set
 ```
 
 ## Usage
-``` javascript
-var RealSet = require('math.real-set')
+``` JavaScript
+const RealSet = require('math.real-set')
 
-var set = new RealSet('(0, 2] U {6, 7, 8}')
+const A = RealSet.parse('(0, 2] U {6, 7, 8}')
+const B = RealSet.parse('(5, 5)')
+const C = RealSet.parse('[1, 2)')
+const D = RealSet.parse('(2, 7)')
+const E = RealSet.parse('(8, 9]')
 
-set.isEmpty() // false
-set.contains(4) // false
-set.contains(6) // true
-set.contains('[1, 2)') // true
-set.union('(2, 7)') // new RealSet('(0, 7] U {8}')
-set.union('(8, 9])') // new RealSet('(0, 2] U {6, 7} U [8, 9]')
+// emptyness
+A.isEmpty() // false
+B.isEmpty() // true
+
+// Containing numbers
+A.contains(4) // false
+A.contains(6) // true
+B.contains(3) // false
+
+// Containing sets
+A.contains(C) // true
+
+// joining sets
+A.union(D) // A U D is equivalent to RealSet.parse('(0, 7] U {8}')
+A.union(E) // A U E is equivalent to RealSet.parse('(0, 2] U {6, 7} U [8, 9]')
+
+// converting to string
+A.toString() // '{6, 7, 8} U (0, 2]'
+B.toString() // '{}'
+const F = RealSet.parse('[3, 3]')
+F.toString() // '{3}'
 ```
 
 ## API
 
-### Set
-#### constructor(set)
+### Real subsets creation
 
-Constructor creates an instance of Set class. it throws an error if `set` is not [SetCastable](#setcastable)
+#### parse :: String -> RealSet
 
-#### Set#isEmpty()
-
-It returns true or false if set is empty or not.
+Static method that takes and string as a representation of RealSet and returns a RealSet instance. It throws an error if string is not parsable to RealSet.
 
 Example:
-``` javascript
-var RealSet = require('math.real-set')
+``` JavaScript
+const RealSet = require('math.real-set')
 
-var set = new RealSet('[2, 4)')
-
-set.isEmpty() // returns false
+const set = RealSet.parse('(2, 5] U {6} U [8, 9)')
 ```
 
-#### Set#contains(set)
-It returns `true` or `false` if instance contains the `set` passed by parameter. `contains` throws an exception if `set` is not [SetCastable](#setcastable)
+#### fromIntervals :: [Interval] -> RealSet
+
+Static method that takes an array of [Interval](https://github.com/xgbuils/math.interval-utils#interval)s and returns a RealSet instance.
 
 Example:
-``` javascript
-var RealSet = require('math.real-set')
+``` JavaScript
+const RealSet = require('math.real-set')
 
-var set = new RealSet('[1, 3) U [4, 8]')
-
-set.contains('(1, 2) U [4, 7)') // returns true
-set.contains(new RealSet('{3, 7}')) // returns false
+const set = RealSet.fromIntervals([
+    [{value: 2, limit: 1}, {value: 5, limit: 0}], // (2, 5]
+    [{value: 6, limit: 0}, {value: 6, limit: 0}], // {6}
+    [{value: 8, limit: 0}, {value: 9, limit: -1}] // [8, 9)
+])
 ```
 
-#### Set#union(...sets)
-It returns a set that represents the union of `sets` passed by parameter. It throws an error if some parameter is not SetCastable.
+### Predicates
 
-``` javascript
-var RealSet = require('math.real-set')
+#### contains :: RealSet ~> RealSet -> Boolean
+Returns true or false depending on real set param is contained inside the set or not, respectively.
 
-var set = new RealSet('[1, 3) U (3, 4]')
+Example:
+``` JavaScript
+const RealSet = require('math.real-set')
 
-set.union('(2, 4) U {5}', '{5} U (6, 7)')
-// returns new RealSet('[1, 4] U {5} (6, 7)')
+const A = RealSet.parse('[1, 3) U [4, 8]')
+const B = RealSet.parse('(1, 2) U [4, 7)')
+const C = RealSet.parse('{3, 6}')
+
+A.contains(B) // true
+A.contains(C) // false
+C.contains(A) // false
 ```
 
-#### Set.union(...sets)
-Set also has static method that calculates the union of sets in the same way as `union` method.
+#### has :: RealSet ~> Number -> Boolean 
+Returns `true` or `false` if the set has a number or not, respectively.
 
-``` javascript
-var RealSet = require('math.real-set')
+Example:
+``` JavaScript
+const RealSet = require('math.real-set')
+const set = RealSet.parse('(1, 5] U {8}')
 
-RealSet.union('[1, 3) U (3, 4]', '(2, 4) U {5}', '{5} U (6, 7)')
-// returns new RealSet('[1, 4] U {5} (6, 7)')
+set.has(1) // false
+set.has(3) // true
+set.has(5) // true
+set.has(7) // false
+set.has(8) // true
 ```
 
-#### Set#toString()
-It returns an string with a expression representation of set
+#### isEmpty :: RealSet ~> Boolean
 
-``` javascript
-var RealSet = require('math.real-set')
+Returns true or false if set is empty or not.
 
-var a = new RealSet('(5, 2] U (3, 3)') // empty
-var b = new RealSet('[2, 2] U (5, 6)') // singleton interval
+Example:
+``` JavaScript
+const RealSet = require('math.real-set')
 
-a.toString() // '{}'
-b.toString() // '{2} U (5, 6)'
+const A = RealSet.parse('[2, 4)')
+const B = RealSet.parse('[4, 2)')
+
+A.isEmpty() // false
+B.isEmpty() // true
 ```
 
-### SetCastable
-A value is SetCastable if it is one of this list of types:
-- instance of `Set`.
-- string that parses to set (`'[2, 5] U {4}'`, `'[0, 5) U {-2, 8, 12.5}'`, etc).
-- [IntervalCastable](https://github.com/xgbuils/math.interval#intervalcastable)
-- Array of [IntervalCastable](https://github.com/xgbuils/math.interval#intervalcastable)
+### Real subset operations
 
-### Exported functions
-
-#### rawSet(set)
-It converts Set instance to array of [data structure interval](https://github.com/xgbuils/math.interval-utils) defined in `math.interval-utils` package. It is posible to import this function thus:
+#### union :: RealSet ~> RealSet -> RealSet
+Instance method that returns the union of two sets.
 
 ``` javascript
-var rawSet = require('math.interval/src/raw-set.js')
+const RealSet = require('math.real-set')
+
+const A = RealSet.parse('[1, 3) U (3, 4]')
+const B = RealSet.parse('(2, 4) U {5}', '{5} U (6, 7)')
+
+A.union(B) // [1, 4] U {5} U (6, 7)
 ```
 
-#### cast(set)
-It converts SetCastable value to array of interval [data structure interval](https://github.com/xgbuils/math.interval-utils) defined in `math.interval-utils` package. It is posible to import this function thus:
+#### union :: [RealSet] -> RealSet
+Static method that takes an array of RealSet instances and returns a RealSet instance that represents the union of the list of sets.
 
-``` javascript
-var rawSet = require('math.real-set/src/cast.js')
+``` JavaScript
+const RealSet = require('math.real-set')
+const A = RealSet.parse('[1, 3) U (3, 4]')
+const B = RealSet.parse('(2, 4) U {5}')
+const C = RealSet.parse('{5} U (6, 7)')
+
+RealSet.union([A, B, C]) // [1, 4] U {5} (6, 7)
+```
+
+RealSet converters
+
+#### toString :: RealSet ~> String
+Converts the real set into a string representation.
+
+``` JavaScript
+const RealSet = require('math.real-set')
+
+const A = RealSet.parse('(5, 2] U (3, 3)') // empty
+const B = RealSet.parse('[2, 2] U (5, 6)') // singleton interval
+
+A.toString() // '{}'
+B.toString() // '{2} U (5, 6)'
+```
+
+#### toIntervals :: RealSet ~> [Interval]
+Converts the real set into an array of disjoint [Interval](https://github.com/xgbuils/math.interval-utils#interval)s ordered from lowest to highest.
+
+``` JavaScript
+const RealSet = require('math.real-set')
+
+const A = RealSet.parse('(5, 6) U [2, 2] U {4, 8}')
+
+A.toIntervals() /* [
+    [{value: 2, limit: 0}, {value: 2, limit: 0}], // {2}
+    [{value: 4, limit: 0}, {value: 4, limit: 0}], // {4}
+    [{value: 5, limit: 1}, {value: 6, limit: -1}], // (5, 6)
+    [{value: 8, limit: 0}, {value: 8, limit: 0}]  // {8}
+]
 ```
 
 ## LICENSE
