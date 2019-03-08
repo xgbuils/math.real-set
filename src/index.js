@@ -18,16 +18,14 @@ const notIsolatedToString = ([left, right]) => {
 
 const containsByIntervals = (intervals1, intervals2) => {
     return intervals2.every(function(i2) {
-        return intervals1.some(function(i1) {
-            return contains(i1, i2)
-        })
+        return intervals1.some(i1 => contains(i1, i2))
     })
 }
 
 const toIntervals = set => set.intervals
 const fromIntervals = intervals => new RealSet(union(intervals))
 
-const realSetUnion = (...args) => fromIntervals(flatten(args.map(toIntervals)))
+const realSetUnion = sets => fromIntervals(flatten(sets.map(toIntervals)))
 
 class RealSet {
     constructor(intervals) {
@@ -38,23 +36,20 @@ class RealSet {
         return this.intervals.length === 0
     }
 
-    contains(e) {
-        let intervals
-        if (isNumber(e)) {
-            intervals = [numToInterval(e)]
-        } else if (e instanceof RealSet) {
-            intervals = e.intervals
-        } else {
-            return false
-        }
-
-        return containsByIntervals(this.intervals, intervals)
+    contains(set) {
+        return set instanceof RealSet
+            ? containsByIntervals(this.intervals, set.intervals)
+            : false
     }
 
-    union(...args) {
-        const sets = [this]
-        sets.push(...args)
-        return realSetUnion(...sets)
+    has(number) {
+        return isNumber(number)
+            ? containsByIntervals(this.intervals, [numToInterval(number)])
+            : false
+    }
+
+    union(set) {
+        return realSetUnion([this, set])
     }
 
     toString() {
@@ -65,6 +60,10 @@ class RealSet {
         const isolatedIntervals = isolatedToString(intervals.filter(isIsolatedInterval))
         const notIsolatedIntervals = intervals.filter(isNotIsolatedInterval).map(notIsolatedToString)
         return [...isolatedIntervals, ...notIsolatedIntervals].join(' U ')
+    }
+
+    toIntervals() {
+        return toIntervals(this)
     }
 }
 
@@ -79,8 +78,6 @@ module.exports = {
     },
 
     fromIntervals,
-
-    toIntervals,
 
     union: realSetUnion
 }
