@@ -74,7 +74,7 @@ module.exports = {
             err => {
                 throw err
             },
-            intervals => new RealSet(union(intervals))
+            intervals => fromIntervals(union(intervals))
         ).getOrElse()
     },
 
