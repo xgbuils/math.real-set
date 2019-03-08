@@ -8,7 +8,7 @@
 Class to work with subsets of real numbers.
 
 ## Version
-0.3.0
+0.4.0
 
 ## Install
 ``` bash
